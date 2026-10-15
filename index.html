@@ -9,8 +9,15 @@ function rs(){D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.wi
 addEventListener('resize',rs);rs();
 const SK=[{n:'Mint Pop',a:'#7dffb2',b:'#2ed9a0',p:0},{n:'Sky Berry',a:'#7fd8ff',b:'#3a8dff',p:30},{n:'Cotton Candy',a:'#ffc2f0',b:'#ff7ac8',p:60},{n:'Lemon Drop',a:'#fff27a',b:'#ffc93c',p:100},{n:'Peach Fizz',a:'#ffb199',b:'#ff6f91',p:160},{n:'Grape Soda',a:'#c9a0ff',b:'#7b4dff',p:250},{n:'Lava',a:'#ffd84d',b:'#ff3b30',p:400},{n:'Aurora',a:'#5cffd8',b:'#8a5cff',p:700},{n:'Galaxy',a:'#ff6ad5',b:'#3b3bff',p:1100},{n:'Rainbow',r:1,p:2000}];
 let S={best:0,coins:0,skin:0,own:[0],snd:1};
-try{Object.assign(S,JSON.parse(localStorage.getItem('goo2')||'{}'))}catch(e){}
-function sv(){try{localStorage.setItem('goo2',JSON.stringify(S))}catch(e){}}
+const KEY='goo2';
+function rd(){let a=null,c=null,best=null;try{a=localStorage.getItem(KEY)}catch(e){}
+try{const m=document.cookie.split('; ').find(x=>x.startsWith(KEY+'='));if(m)c=decodeURIComponent(m.slice(KEY.length+1))}catch(e){}
+for(const j of [a,c]){try{const o=JSON.parse(j);if(o&&typeof o==='object'&&(!best||(o.ts||0)>(best.ts||0)))best=o}catch(e){}}return best}
+function sv(){S.ts=Date.now();const j=JSON.stringify(S);try{localStorage.setItem(KEY,j)}catch(e){}
+try{document.cookie=KEY+'='+encodeURIComponent(j)+'; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+{const o=rd();if(o){S.best=+o.best||0;S.coins=Math.max(0,+o.coins||0);S.snd=o.snd===0?0:1;S.own=Array.isArray(o.own)?o.own.filter(i=>SK[i]):[0];if(!S.own.includes(0))S.own.push(0);S.skin=S.own.includes(o.skin)?o.skin:0;sv()}}
+addEventListener('pagehide',sv);document.addEventListener('visibilitychange',()=>{if(document.hidden)sv()});
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 let st='home',rows=[],bl={x:200,w:110,vw:0},score=0,streak=0,speed=0,sp=0,lastGx=200,parts=[],shake=0,t=0,overT=0,down=false,kThin=false,kDir=0,tx=200,AC=null,cd=0,earn=0,shown=0,nb=false,toast='',toastT=0,B=[];
 function beep(f,d,ty){try{if(!AC||!S.snd)return;const o=AC.createOscillator(),v=AC.createGain();o.type=ty||'sine';o.frequency.value=f;v.gain.value=.08;v.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(v);v.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
 function mx(e){tx=(e.clientX-L)/u}
